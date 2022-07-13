@@ -3,7 +3,7 @@ import "json"
 
 param BC_API_KEY
 
-req = http.request("https://www.bridgecrew.cloud/api/v1/tfCloud/sentinel/fc").with_header("Authorization", BC_API_KEY)
+req = http.request("https://www.bridgecrew.cloud/api/v1/tfCloud/sentinel/ws-HqU2ejJ3zYqwYof7").with_header("Authorization", BC_API_KEY)
 resp = json.unmarshal(http.get(req).body)
 if (length(resp.violations) > 0) {
     print("Violations:\n")
