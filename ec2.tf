@@ -1,6 +1,6 @@
 resource "aws_instance" "web_host" {
   # ec2 have plain text secrets in user data
-  ami           = "${var.ami}"
+  # ami           = "${var.ami}"
   instance_type = "t2.nano"
 
   vpc_security_group_ids = [
@@ -17,23 +17,6 @@ export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMAAAKEY
 export AWS_DEFAULT_REGION=us-west-2
 echo "<h1>Deployed via Terraform</h1>" | sudo tee /var/www/html/index.html
 EOF
-}
-
-resource "aws_ebs_volume" "web_host_storage" {
-  # unencrypted volume
-  #encrypted         = false  # Setting this causes the volume to be recreated on apply 
-  size = 1
-}
-
-resource "aws_ebs_snapshot" "example_snapshot" {
-  # ebs snapshot without encryption
-  volume_id   = "${aws_ebs_volume.web_host_storage.id}"
-}
-
-resource "aws_volume_attachment" "ebs_att" {
-  device_name = "/dev/sdh"
-  volume_id   = "${aws_ebs_volume.web_host_storage.id}"
-  instance_id = "${aws_instance.web_host.id}"
 }
 
 resource "aws_security_group" "web-node" {
@@ -115,15 +98,6 @@ resource "aws_route" "public_internet_gateway" {
 resource "aws_network_interface" "web-eni" {
   subnet_id   = aws_subnet.web_subnet.id
   private_ips = ["172.16.10.100"]
-}
-
-# VPC Flow Logs to S3
-resource "aws_flow_log" "vpcflowlogs" {
-  log_destination      = aws_s3_bucket.flowbucket.arn
-  log_destination_type = "s3"
-  traffic_type         = "ALL"
-  vpc_id               = aws_vpc.web_vpc.id
-}
 
 output "ec2_public_dns" {
   description = "Web Host Public DNS name"
