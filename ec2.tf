@@ -21,7 +21,6 @@ EOF
 
 resource "aws_ebs_volume" "web_host_storage" {
   # unencrypted volume
-  availability_zone = "${var.availability_zone}"
   #encrypted         = false  # Setting this causes the volume to be recreated on apply 
   size = 1
 }
@@ -39,7 +38,6 @@ resource "aws_volume_attachment" "ebs_att" {
 
 resource "aws_security_group" "web-node" {
   # security group is open to the world in SSH port
-  name        = "${local.resource_prefix.value}-sg"
   vpc_id      = aws_vpc.web_vpc.id
 
   ingress {
@@ -125,11 +123,6 @@ resource "aws_flow_log" "vpcflowlogs" {
   log_destination_type = "s3"
   traffic_type         = "ALL"
   vpc_id               = aws_vpc.web_vpc.id
-}
-
-resource "aws_s3_bucket" "flowbucket" {
-  bucket        = "${local.resource_prefix.value}-flowlogs"
-  force_destroy = true
 }
 
 output "ec2_public_dns" {
